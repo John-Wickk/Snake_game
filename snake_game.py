@@ -87,6 +87,73 @@ pen.hideturtle()
 pen.goto(0, 260)
 pen.write("score: 0 high score: 0", align="center", font=('courier', 25, "normal"))
 
+#main game loop
+while True:
+    wn.update()
+    #check for the colliosion with the food
+    if head.distance(food) < 20:
+        #move the food to the random spot
+        x = random.randint(-290, 290)
+        y = random.randint(-290, 290)
+        food.goto(x,y)
+        #add a segment
+        new_segment = turtle.Turtle()
+        new_segment.speed(0)
+        new_segment.shape("circle")
+        new_segment.color("green")
+        new_segment.penup()
+        segments.append(new_segment)
+
+        #shortern the delay
+        delay -=0.001
+
+        #increase the score
+        score += 10
+
+        if score > high_score:
+            high_score = score
+
+        pen.clear()
+        pen.write("score: {} high Score: {}".format(score, high_score), align='center', font=("courier", 24, "normal"))
+
+
+        #move the segment 0 to where the head is
+    for index in range(len(segments)-1, 0, -1):
+            x = segments[index-1].xcor()
+            y = segments[index-1].ycor()
+            segments[index].goto(x, y)
+    if head.xcor()> 290 or head.xcor()<-290 or head.ycor()>290 or head.ycor()<-290:
+        time.sleep(1)
+        head.goto(0, 0)
+        head.direction = "stop"
+
+        #move segment 0 to where the head is
+    if len(segments) > 0:
+            x = head.xcor()
+            y = head.ycor()
+            segments[0].goto(x,y)
+    move()
+    #sheck for the collision of head and body segments
+    for segment in segments:
+        if segment.distance(head)<20:
+            time.sleep(1)
+            head.goto(0, 0)
+            head.direction = 'stop'
+            # hide the segment when collied
+            for segment in segments:
+                segment.goto(1000, 1000)
+
+                delay -= 0.001
+
+            # clear the segments list
+            segments.clear()
+
+            #reaset the score
+            score = 0
+            pen.clear()
+            pen.write("score: {} high Score: {}".format(score, high_score), align='center', font=("courier", 24, "normal"))
+
+    time.sleep(delay)
 
 
 
